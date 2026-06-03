@@ -18,13 +18,13 @@ function getSamplePosts() {
     id: Date.now() - 200000,
     title: 'Week 1 — Project kickoff & IBM onboarding',
     date: '2025-06-02',
-    body: 'Team formed and introductions made. Reviewed the project brief from IBM and began IBM onboarding courses. Awaiting kickoff meeting and first contact with the IBM client via Dean Mohammedally. Academic supervisor meeting with Sobhan Tehrani to be arranged for next week.',
+    body: 'Team formed and introductions made. Reviewed the project brief from IBM and began IBM onboarding courses. Awaiting kickoff meeting and first contact with the IBM client via Dean Mohammedally. We have also met with our academic supervisor, Sobhan Tehrani.',
     milestones: [
       { text: 'Team assembled', status: 'done' },
       { text: 'Project brief reviewed', status: 'done' },
       { text: 'IBM onboarding courses', status: 'progress' },
       { text: 'Kickoff meeting with IBM client', status: 'todo' },
-      { text: 'Supervisor meeting arranged', status: 'todo' }
+      { text: 'Supervisor meeting held', status: 'done' }
     ]
   }];
 }
