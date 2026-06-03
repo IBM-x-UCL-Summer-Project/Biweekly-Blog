@@ -53,7 +53,7 @@
       <div class="milestone-builder" id="msBuilder"></div>
       <button class="ibm-btn" onclick="addMsRow()" style="background:var(--color-background-primary);color:var(--color-text-primary);border:0.5px solid var(--color-border-secondary);margin-top:4px;">+ Add milestone</button>
       <div style="margin-top:12px;">
-        <button class="ibm-btn" onclick="submitPost()">Publish update</button>
+        <button class="ibm-btn" id="submitBtn" onclick="submitPost()">Publish update</button>
         <button class="ibm-btn ibm-btn-outline" onclick="clearForm()">Clear</button>
       </div>
     </div>
@@ -63,6 +63,8 @@
 </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

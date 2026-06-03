@@ -1,32 +1,14 @@
-const PASS = 'ibm2026';
-const STORE_KEY = 'ibm_granite_blog_v2';
+const PASS = CONFIG.ADMIN_PASS;
+const db = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY);
+
 let authed = false;
+let editingId = null;
+const MS_ORDER = { done: 0, progress: 1, todo: 2 };
 
-function loadPosts() {
-  try {
-    const raw = localStorage.getItem(STORE_KEY);
-    return raw ? JSON.parse(raw) : getSamplePosts();
-  } catch { return getSamplePosts(); }
-}
-
-function savePosts(posts) {
-  try { localStorage.setItem(STORE_KEY, JSON.stringify(posts)); } catch {}
-}
-
-function getSamplePosts() {
-  return [{
-    id: Date.now() - 200000,
-    title: 'Week 1 — Project kickoff & IBM onboarding',
-    date: '2025-06-02',
-    body: 'Team formed and introductions made. Reviewed the project brief from IBM and began IBM onboarding courses. Awaiting kickoff meeting and first contact with the IBM client via Dean Mohammedally. We have also met with our academic supervisor, Sobhan Tehrani.',
-    milestones: [
-      { text: 'Team assembled', status: 'done' },
-      { text: 'Project brief reviewed', status: 'done' },
-      { text: 'IBM onboarding courses', status: 'progress' },
-      { text: 'Kickoff meeting with IBM client', status: 'todo' },
-      { text: 'Supervisor meeting held', status: 'done' }
-    ]
-  }];
+async function loadPosts() {
+  const { data, error } = await db.from('Posts').select('*').order('date', { ascending: false });
+  if (error) { console.error('Failed to load posts:', error.message); return []; }
+  return data || [];
 }
 
 function statusLabel(s) {
@@ -40,13 +22,12 @@ function escapeHtml(str) {
 function renderPosts(posts) {
   const c = document.getElementById('postsContainer');
   if (!posts.length) { c.innerHTML = '<div class="empty-state">No updates yet. Be the first to post.</div>'; return; }
-  const sorted = [...posts].sort((a,b) => new Date(b.date) - new Date(a.date));
-  c.innerHTML = sorted.map((p, i) => `
+  c.innerHTML = posts.map((p, i) => `
     <div class="ibm-post">
       <div class="ibm-post-header">
         <div>
           <div class="ibm-post-title">${escapeHtml(p.title)}</div>
-          <div class="ibm-post-date">${formatDate(p.date)} &nbsp;·&nbsp; <span class="update-num">Update #${sorted.length - i}</span></div>
+          <div class="ibm-post-date">${formatDate(p.date)} &nbsp;·&nbsp; <span class="update-num">Update #${posts.length - i}</span></div>
         </div>
         <div class="ibm-badge">Biweekly update</div>
       </div>
@@ -54,13 +35,14 @@ function renderPosts(posts) {
       ${p.milestones && p.milestones.length ? `
       <div class="ibm-milestones">
         <div class="ibm-milestones-label">Progress</div>
-        ${p.milestones.map(m => `
+        ${[...p.milestones].sort((a,b) => MS_ORDER[a.status] - MS_ORDER[b.status]).map(m => `
           <div class="ibm-milestone-row">
             <div class="ibm-m-dot ${m.status}"></div>
             <span class="ibm-m-text ${m.status === 'done' ? 'done' : ''}">${escapeHtml(m.text)}</span>
             <span class="ibm-m-status">${statusLabel(m.status)}</span>
           </div>`).join('')}
       </div>` : ''}
+      ${authed ? `<div class="ibm-post-actions"><button class="ibm-edit-btn" onclick="editPost(${p.id})">Edit</button></div>` : ''}
     </div>`).join('');
 }
 
@@ -75,27 +57,46 @@ function toggleAdmin() {
   if (open && !authed) document.getElementById('pwInput').focus();
 }
 
-function checkPw() {
+async function checkPw() {
   if (document.getElementById('pwInput').value === PASS) {
     authed = true;
     document.getElementById('authSection').style.display = 'none';
     document.getElementById('formSection').style.display = 'block';
     addMsRow();
     document.getElementById('fDate').valueAsDate = new Date();
+    renderPosts(await loadPosts());
   } else {
     document.getElementById('authErr').style.display = 'block';
   }
 }
 
-function addMsRow() {
+function addMsRow(text = '', status = 'progress') {
   const b = document.getElementById('msBuilder');
   const row = document.createElement('div');
   row.className = 'ms-row';
-  row.innerHTML = `<input type="text" placeholder="Milestone description" /><select><option value="done">Complete</option><option value="progress" selected>In progress</option><option value="todo">Planned</option></select><button onclick="this.parentElement.remove()">×</button>`;
+  const opt = (val, label) => `<option value="${val}"${status === val ? ' selected' : ''}>${label}</option>`;
+  row.innerHTML = `<input type="text" placeholder="Milestone description" value="${escapeHtml(text)}" /><select>${opt('done','Complete')}${opt('progress','In progress')}${opt('todo','Planned')}</select><button onclick="this.parentElement.remove()">×</button>`;
   b.appendChild(row);
 }
 
-function submitPost() {
+async function editPost(id) {
+  if (!authed) return;
+  const posts = await loadPosts();
+  const post = posts.find(p => p.id === id);
+  if (!post) return;
+  editingId = id;
+  document.getElementById('fTitle').value = post.title;
+  document.getElementById('fDate').value = post.date;
+  document.getElementById('fBody').value = post.body;
+  document.getElementById('msBuilder').innerHTML = '';
+  (post.milestones || []).forEach(m => addMsRow(m.text, m.status));
+  document.getElementById('submitBtn').textContent = 'Save changes';
+  document.getElementById('adminPanel').classList.add('open');
+  document.getElementById('adminToggleLabel').textContent = 'Close panel';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+async function submitPost() {
   const title = document.getElementById('fTitle').value.trim();
   const date = document.getElementById('fDate').value;
   const body = document.getElementById('fBody').value.trim();
@@ -107,19 +108,38 @@ function submitPost() {
     const s = r.querySelector('select').value;
     if (t) milestones.push({ text: t, status: s });
   });
-  const posts = loadPosts();
-  posts.push({ id: Date.now(), title, date, body, milestones });
-  savePosts(posts);
-  renderPosts(posts);
+
+  document.getElementById('submitBtn').disabled = true;
+  document.getElementById('submitBtn').textContent = 'Saving…';
+
+  let error;
+  if (editingId !== null) {
+    ({ error } = await db.from('Posts').update({ title, date, body, milestones }).eq('id', editingId));
+  } else {
+    ({ error } = await db.from('Posts').insert({ title, date, body, milestones }));
+  }
+
+  document.getElementById('submitBtn').disabled = false;
+
+  if (error) {
+    alert('Failed to save: ' + error.message);
+    document.getElementById('submitBtn').textContent = editingId ? 'Save changes' : 'Publish update';
+    return;
+  }
+
+  renderPosts(await loadPosts());
   clearForm();
   document.getElementById('adminPanel').classList.remove('open');
   document.getElementById('adminToggleLabel').textContent = 'Post an update';
 }
 
 function clearForm() {
+  editingId = null;
   ['fTitle','fBody'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('fDate').valueAsDate = new Date();
   document.getElementById('msBuilder').innerHTML = '';
+  document.getElementById('submitBtn').textContent = 'Publish update';
+  document.getElementById('submitBtn').disabled = false;
 }
 
-renderPosts(loadPosts());
+(async () => { renderPosts(await loadPosts()); })();
