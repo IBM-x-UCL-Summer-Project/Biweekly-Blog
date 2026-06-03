@@ -1,0 +1,228 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+  .ibm-blog * { box-sizing: border-box; font-family: 'IBM Plex Sans', sans-serif; }
+  .ibm-blog { padding: 1.5rem 0; }
+  .ibm-header { border-bottom: 2px solid var(--color-text-primary); padding-bottom: 1.25rem; margin-bottom: 2rem; }
+  .ibm-wordmark { font-size: 11px; font-weight: 600; letter-spacing: 0.18em; color: var(--color-text-secondary); text-transform: uppercase; margin-bottom: 6px; font-family: 'IBM Plex Mono', monospace; }
+  .ibm-title { font-size: 26px; font-weight: 300; color: var(--color-text-primary); line-height: 1.2; margin: 0 0 4px; }
+  .ibm-subtitle { font-size: 13px; color: var(--color-text-secondary); font-family: 'IBM Plex Mono', monospace; margin-bottom: 14px; }
+  .ibm-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 24px; border-top: 0.5px solid var(--color-border-tertiary); padding-top: 12px; }
+  .ibm-meta-pill { font-size: 11px; font-family: 'IBM Plex Mono', monospace; color: var(--color-text-secondary); }
+  .ibm-meta-pill span { color: var(--color-text-primary); font-weight: 500; }
+  .ibm-meta-full { grid-column: 1 / -1; }
+  .ibm-team-list { font-size: 11px; font-family: 'IBM Plex Mono', monospace; color: var(--color-text-primary); font-weight: 500; }
+
+  .ibm-post { border: 0.5px solid var(--color-border-secondary); border-left: 3px solid #0F62FE; margin-bottom: 1.25rem; padding: 1.25rem; background: var(--color-background-primary); }
+  .ibm-post-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+  .ibm-post-title { font-size: 16px; font-weight: 500; color: var(--color-text-primary); margin: 0 0 4px; }
+  .ibm-post-date { font-size: 11px; font-family: 'IBM Plex Mono', monospace; color: var(--color-text-secondary); }
+  .ibm-badge { font-size: 10px; font-family: 'IBM Plex Mono', monospace; background: #0F62FE; color: #fff; padding: 3px 8px; white-space: nowrap; flex-shrink: 0; font-weight: 500; letter-spacing: 0.06em; }
+  .ibm-post-body { font-size: 14px; color: var(--color-text-secondary); line-height: 1.6; margin: 0 0 14px; }
+  .ibm-milestones { border-top: 0.5px solid var(--color-border-tertiary); padding-top: 10px; }
+  .ibm-milestones-label { font-size: 10px; font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.1em; color: var(--color-text-secondary); text-transform: uppercase; margin-bottom: 8px; }
+  .ibm-milestone-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+  .ibm-m-dot { width: 8px; height: 8px; flex-shrink: 0; }
+  .ibm-m-dot.done { background: #24A148; }
+  .ibm-m-dot.progress { background: #F1C21B; }
+  .ibm-m-dot.todo { background: var(--color-border-secondary); }
+  .ibm-m-text { font-size: 12px; color: var(--color-text-secondary); font-family: 'IBM Plex Mono', monospace; }
+  .ibm-m-text.done { text-decoration: line-through; color: var(--color-text-tertiary); }
+
+  .admin-toggle { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 12px; font-family: 'IBM Plex Mono', monospace; color: var(--color-text-secondary); padding: 6px 0; margin-bottom: 1rem; border: none; background: none; }
+  .admin-panel { border: 0.5px solid var(--color-border-secondary); padding: 1.25rem; background: var(--color-background-secondary); display: none; margin-bottom: 1.5rem; }
+  .admin-panel.open { display: block; }
+  .admin-panel label { font-size: 11px; font-family: 'IBM Plex Mono', monospace; color: var(--color-text-secondary); display: block; margin-bottom: 4px; margin-top: 10px; text-transform: uppercase; letter-spacing: 0.08em; }
+  .admin-panel label:first-child { margin-top: 0; }
+  .admin-panel input, .admin-panel textarea, .admin-panel select { width: 100%; font-size: 13px; font-family: 'IBM Plex Mono', monospace; padding: 6px 8px; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); color: var(--color-text-primary); border-radius: 0; }
+  .admin-panel textarea { min-height: 80px; resize: vertical; }
+  .ibm-btn { font-size: 12px; font-family: 'IBM Plex Mono', monospace; background: #0F62FE; color: #fff; border: none; padding: 8px 16px; cursor: pointer; margin-top: 12px; letter-spacing: 0.04em; }
+  .ibm-btn:hover { background: #0353E9; }
+  .ibm-btn-outline { background: transparent; color: var(--color-text-primary); border: 0.5px solid var(--color-border-secondary); margin-left: 8px; }
+  .ibm-btn-outline:hover { background: var(--color-background-secondary); }
+  .milestone-builder { margin-top: 8px; }
+  .ms-row { display: flex; gap: 6px; margin-bottom: 6px; align-items: center; }
+  .ms-row input { flex: 1; }
+  .ms-row select { width: 100px; flex-shrink: 0; }
+  .ms-row button { flex-shrink: 0; background: none; border: 0.5px solid var(--color-border-secondary); color: var(--color-text-secondary); cursor: pointer; padding: 4px 8px; font-size: 13px; }
+  .auth-row { display: flex; gap: 8px; align-items: flex-end; }
+  .auth-row input { flex: 1; }
+  .empty-state { text-align: center; padding: 3rem 1rem; color: var(--color-text-tertiary); font-size: 13px; font-family: 'IBM Plex Mono', monospace; }
+  .update-num { font-size: 10px; font-family: 'IBM Plex Mono', monospace; color: var(--color-text-tertiary); }
+</style>
+
+<div class="ibm-blog">
+  <h2 class="sr-only">IBM Granite OnDevice Voice Concierge — project blog with biweekly updates</h2>
+
+  <div class="ibm-header">
+    <div class="ibm-wordmark">IBM Research × UCL — MSc Project 2025</div>
+    <h1 class="ibm-title">Granite OnDevice<br>Voice Concierge</h1>
+    <div class="ibm-subtitle">A private, offline AI companion for independent living</div>
+    <div class="ibm-meta-grid">
+      <div class="ibm-meta-pill">Supervisor <span>Sobhan Tehrani</span></div>
+      <div class="ibm-meta-pill">Client <span>IBM</span></div>
+      <div class="ibm-meta-pill">Team Lead <span>Akshobh Singh</span></div>
+      <div class="ibm-meta-pill">Vivas <span>8–9 Sep 2025</span></div>
+      <div class="ibm-meta-pill ibm-meta-full">Team members
+        <div class="ibm-team-list">Akshobh Singh &nbsp;·&nbsp; Jermaine Acho Okere &nbsp;·&nbsp; Xinfeng Fu &nbsp;·&nbsp; Xiaomeng Dong &nbsp;·&nbsp; Kaijian Liu</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="admin-toggle" onclick="toggleAdmin()" id="adminToggleBtn">
+    <i class="ti ti-lock" style="font-size:14px" aria-hidden="true"></i>
+    <span id="adminToggleLabel">Post an update</span>
+  </button>
+
+  <div class="admin-panel" id="adminPanel">
+    <div id="authSection">
+      <label>Admin password</label>
+      <div class="auth-row">
+        <input type="password" id="pwInput" placeholder="Enter password" onkeydown="if(event.key==='Enter')checkPw()" />
+        <button class="ibm-btn" onclick="checkPw()">Unlock</button>
+      </div>
+      <div id="authErr" style="font-size:11px;color:#DA1E28;font-family:'IBM Plex Mono',monospace;margin-top:6px;display:none;">Incorrect password.</div>
+    </div>
+    <div id="formSection" style="display:none;">
+      <label>Update title</label>
+      <input type="text" id="fTitle" placeholder="e.g. Week 2 — IBM onboarding complete" />
+      <label>Date</label>
+      <input type="date" id="fDate" />
+      <label>Summary</label>
+      <textarea id="fBody" placeholder="Describe what the team accomplished this sprint..."></textarea>
+      <label>Milestones</label>
+      <div class="milestone-builder" id="msBuilder"></div>
+      <button class="ibm-btn" onclick="addMsRow()" style="background:var(--color-background-primary);color:var(--color-text-primary);border:0.5px solid var(--color-border-secondary);margin-top:4px;">+ Add milestone</button>
+      <div style="margin-top:12px;">
+        <button class="ibm-btn" onclick="submitPost()">Publish update</button>
+        <button class="ibm-btn ibm-btn-outline" onclick="clearForm()">Clear</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="postsContainer"></div>
+</div>
+
+<script>
+const PASS = 'ibm2025';
+const STORE_KEY = 'ibm_granite_blog_v2';
+let authed = false;
+
+async function loadPosts() {
+  try {
+    const r = await window.storage.get(STORE_KEY);
+    return r ? JSON.parse(r.value) : getSamplePosts();
+  } catch { return getSamplePosts(); }
+}
+
+async function savePosts(posts) {
+  try { await window.storage.set(STORE_KEY, JSON.stringify(posts)); } catch {}
+}
+
+function getSamplePosts() {
+  return [{
+    id: Date.now() - 200000,
+    title: 'Week 1 — Project kickoff & IBM onboarding',
+    date: '2025-06-02',
+    body: 'Team formed and introductions made. Reviewed the project brief from IBM and began IBM onboarding courses. Awaiting kickoff meeting and first contact with the IBM client via Dean Mohammedally. Academic supervisor meeting with Sobhan Tehrani to be arranged for next week.',
+    milestones: [
+      { text: 'Team assembled', status: 'done' },
+      { text: 'Project brief reviewed', status: 'done' },
+      { text: 'IBM onboarding courses', status: 'progress' },
+      { text: 'Kickoff meeting with IBM client', status: 'todo' },
+      { text: 'Supervisor meeting arranged', status: 'todo' }
+    ]
+  }];
+}
+
+function statusLabel(s) {
+  return { done: 'Complete', progress: 'In progress', todo: 'Planned' }[s] || s;
+}
+
+function renderPosts(posts) {
+  const c = document.getElementById('postsContainer');
+  if (!posts.length) { c.innerHTML = '<div class="empty-state">No updates yet. Be the first to post.</div>'; return; }
+  const sorted = [...posts].sort((a,b) => new Date(b.date) - new Date(a.date));
+  c.innerHTML = sorted.map((p, i) => `
+    <div class="ibm-post">
+      <div class="ibm-post-header">
+        <div>
+          <div class="ibm-post-title">${p.title}</div>
+          <div class="ibm-post-date">${formatDate(p.date)} &nbsp;·&nbsp; <span class="update-num">Update #${sorted.length - i}</span></div>
+        </div>
+        <div class="ibm-badge">Biweekly update</div>
+      </div>
+      <p class="ibm-post-body">${p.body}</p>
+      ${p.milestones && p.milestones.length ? `
+      <div class="ibm-milestones">
+        <div class="ibm-milestones-label">Progress</div>
+        ${p.milestones.map(m => `
+          <div class="ibm-milestone-row">
+            <div class="ibm-m-dot ${m.status}"></div>
+            <span class="ibm-m-text ${m.status === 'done' ? 'done' : ''}">${m.text}</span>
+            <span style="margin-left:auto;font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--color-text-tertiary)">${statusLabel(m.status)}</span>
+          </div>`).join('')}
+      </div>` : ''}
+    </div>`).join('');
+}
+
+function formatDate(d) {
+  return new Date(d + 'T12:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function toggleAdmin() {
+  const p = document.getElementById('adminPanel');
+  const open = p.classList.toggle('open');
+  document.getElementById('adminToggleLabel').textContent = open ? 'Close panel' : 'Post an update';
+  if (open && !authed) document.getElementById('pwInput').focus();
+}
+
+function checkPw() {
+  if (document.getElementById('pwInput').value === PASS) {
+    authed = true;
+    document.getElementById('authSection').style.display = 'none';
+    document.getElementById('formSection').style.display = 'block';
+    addMsRow();
+    document.getElementById('fDate').valueAsDate = new Date();
+  } else {
+    document.getElementById('authErr').style.display = 'block';
+  }
+}
+
+function addMsRow() {
+  const b = document.getElementById('msBuilder');
+  const row = document.createElement('div');
+  row.className = 'ms-row';
+  row.innerHTML = `<input type="text" placeholder="Milestone description" /><select><option value="done">Complete</option><option value="progress" selected>In progress</option><option value="todo">Planned</option></select><button onclick="this.parentElement.remove()">×</button>`;
+  b.appendChild(row);
+}
+
+async function submitPost() {
+  const title = document.getElementById('fTitle').value.trim();
+  const date = document.getElementById('fDate').value;
+  const body = document.getElementById('fBody').value.trim();
+  if (!title || !date || !body) { alert('Please fill in title, date, and summary.'); return; }
+  const rows = document.querySelectorAll('#msBuilder .ms-row');
+  const milestones = [];
+  rows.forEach(r => {
+    const t = r.querySelector('input').value.trim();
+    const s = r.querySelector('select').value;
+    if (t) milestones.push({ text: t, status: s });
+  });
+  const posts = await loadPosts();
+  posts.push({ id: Date.now(), title, date, body, milestones });
+  await savePosts(posts);
+  renderPosts(posts);
+  clearForm();
+  document.getElementById('adminPanel').classList.remove('open');
+  document.getElementById('adminToggleLabel').textContent = 'Post an update';
+}
+
+function clearForm() {
+  ['fTitle','fBody'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('fDate').valueAsDate = new Date();
+  document.getElementById('msBuilder').innerHTML = '';
+}
+
+loadPosts().then(renderPosts);
+</script>
