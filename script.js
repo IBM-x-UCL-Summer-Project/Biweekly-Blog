@@ -63,7 +63,6 @@ async function checkPw() {
     document.getElementById('authSection').style.display = 'none';
     document.getElementById('formSection').style.display = 'block';
     addMsRow();
-    document.getElementById('fDate').valueAsDate = new Date();
     renderPosts(await loadPosts());
   } else {
     document.getElementById('authErr').style.display = 'block';
@@ -86,7 +85,6 @@ async function editPost(id) {
   if (!post) return;
   editingId = id;
   document.getElementById('fTitle').value = post.title;
-  document.getElementById('fDate').value = post.date;
   document.getElementById('fBody').value = post.body;
   document.getElementById('msBuilder').innerHTML = '';
   (post.milestones || []).forEach(m => addMsRow(m.text, m.status));
@@ -98,9 +96,9 @@ async function editPost(id) {
 
 async function submitPost() {
   const title = document.getElementById('fTitle').value.trim();
-  const date = document.getElementById('fDate').value;
+  const date = new Date().toISOString().split('T')[0];
   const body = document.getElementById('fBody').value.trim();
-  if (!title || !date || !body) { alert('Please fill in title, date, and summary.'); return; }
+  if (!title || !body) { alert('Please fill in title and summary.'); return; }
   const rows = document.querySelectorAll('#msBuilder .ms-row');
   const milestones = [];
   rows.forEach(r => {
@@ -136,7 +134,6 @@ async function submitPost() {
 function clearForm() {
   editingId = null;
   ['fTitle','fBody'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('fDate').valueAsDate = new Date();
   document.getElementById('msBuilder').innerHTML = '';
   document.getElementById('submitBtn').textContent = 'Publish update';
   document.getElementById('submitBtn').disabled = false;
