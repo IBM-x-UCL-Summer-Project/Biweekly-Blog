@@ -22,12 +22,13 @@ function escapeHtml(str) {
 function renderPosts(posts) {
   const c = document.getElementById('postsContainer');
   if (!posts.length) { c.innerHTML = '<div class="empty-state">No updates yet. Be the first to post.</div>'; return; }
-  c.innerHTML = posts.map((p, i) => `
+  const sorted = [...posts].sort((a, b) => new Date(b.date) - new Date(a.date));
+  c.innerHTML = sorted.map((p, i) => `
     <div class="ibm-post">
       <div class="ibm-post-header">
         <div>
           <div class="ibm-post-title">${escapeHtml(p.title)}</div>
-          <div class="ibm-post-date">${formatDate(p.date)} &nbsp;·&nbsp; <span class="update-num">Update #${posts.length - i}</span></div>
+          <div class="ibm-post-date">${formatDate(p.date)} &nbsp;·&nbsp; <span class="update-num">Update #${sorted.length - i}</span></div>
         </div>
         <div class="ibm-badge">Weekly update</div>
       </div>
@@ -44,6 +45,7 @@ function renderPosts(posts) {
       </div>` : ''}
       ${authed ? `<div class="ibm-post-actions"><button class="ibm-edit-btn" onclick="editPost(${p.id})">Edit</button></div>` : ''}
     </div>`).join('');
+
 }
 
 function formatDate(d) {
