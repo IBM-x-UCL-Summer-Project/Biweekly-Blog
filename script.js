@@ -29,7 +29,7 @@ function renderPosts(posts) {
           <div class="ibm-post-title">${escapeHtml(p.title)}</div>
           <div class="ibm-post-date">${formatDate(p.date)} &nbsp;·&nbsp; <span class="update-num">Update #${posts.length - i}</span></div>
         </div>
-        <div class="ibm-badge">Biweekly update</div>
+        <div class="ibm-badge">Weekly update</div>
       </div>
       <p class="ibm-post-body">${escapeHtml(p.body)}</p>
       ${p.milestones && p.milestones.length ? `
