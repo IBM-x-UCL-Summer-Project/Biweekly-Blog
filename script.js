@@ -6,7 +6,7 @@ let editingId = null;
 const MS_ORDER = { done: 0, progress: 1, todo: 2 };
 
 async function loadPosts() {
-  const { data, error } = await db.from('Posts').select('*').order('date', { ascending: false });
+  const { data, error } = await db.from('Posts').select('*').order('created_at', { ascending: false });
   if (error) { console.error('Failed to load posts:', error.message); return []; }
   return data || [];
 }
@@ -22,7 +22,7 @@ function escapeHtml(str) {
 function renderPosts(posts) {
   const c = document.getElementById('postsContainer');
   if (!posts.length) { c.innerHTML = '<div class="empty-state">No updates yet. Be the first to post.</div>'; return; }
-  const sorted = [...posts].sort((a, b) => new Date(b.date) - new Date(a.date));
+  const sorted = [...posts].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
   c.innerHTML = sorted.map((p, i) => `
     <div class="ibm-post">
       <div class="ibm-post-header">
